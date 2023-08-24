@@ -5,17 +5,13 @@
         <div class="text-h6">Expenses</div>
       </q-card-section>
       <q-card-section>
-        <div v-for="expense in expenses" :key="expense.id">
-          <q-item>
-            <q-item-section>
-              {{ expense.description }} - {{ expense.value }} (ID:
-              {{ expense.user_id }})
-            </q-item-section>
-            <q-item-section side>
-              {{ new Date(expense.created_at).toLocaleString() }}
-            </q-item-section>
-          </q-item>
-        </div>
+        <q-table
+          :rows="expenses"
+          row-key="id"
+          :columns="columns"
+          :rows-per-page-options="[10, 25, 50]"
+          v-model:pagination="pagination"
+        />
       </q-card-section>
     </q-card>
   </q-page>
@@ -30,6 +26,27 @@ export default defineComponent({
   name: 'ExpensesPage',
   setup() {
     const expenses = ref([]);
+    const pagination = ref({
+      page: 1,
+      rowsPerPage: 10,
+    });
+
+    const columns = [
+      {
+        name: 'description',
+        label: 'Description',
+        align: 'left',
+        field: 'description',
+      },
+      { name: 'value', label: 'Value', align: 'left', field: 'value' },
+      { name: 'user_id', label: 'User ID', align: 'left', field: 'user_id' },
+      {
+        name: 'created_at',
+        label: 'Created At',
+        align: 'left',
+        field: (row) => new Date(row.created_at).toLocaleString(),
+      },
+    ];
 
     const fetchExpenses = async () => {
       const token = window.localStorage.getItem('auth_token');
@@ -51,6 +68,8 @@ export default defineComponent({
 
     return {
       expenses,
+      columns,
+      pagination,
     };
   },
 });
