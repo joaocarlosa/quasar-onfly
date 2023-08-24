@@ -15,14 +15,16 @@
 
 <script lang="ts">
 import { defineComponent, ref } from 'vue';
+import { useRouter } from 'vue-router';
 import axios from 'axios';
-import { getApiUrl } from '../config/apiConfig'; // atualize o caminho conforme necessário
+import { getApiUrl } from '../config/apiConfig';
 
 export default defineComponent({
   name: 'LoginPage',
   setup() {
-    const email = ref('jc2@email.com');
+    const email = ref('jc@email.com');
     const password = ref('123123');
+    const router = useRouter();
 
     async function login() {
       const payload = {
@@ -34,6 +36,11 @@ export default defineComponent({
       try {
         const response = await axios.post(`${apiUrl}/login`, payload);
         console.log('Resposta da API:', response.data);
+
+        if (response.data && response.data.token) {
+          window.localStorage.setItem('auth_token', response.data.token);
+          router.push({ name: 'expenses' });
+        }
       } catch (error) {
         console.error('Erro ao fazer login:', error);
       }
@@ -48,6 +55,4 @@ export default defineComponent({
 });
 </script>
 
-<style scoped>
-/* Seus estilos CSS aqui */
-</style>
+<style scoped></style>
