@@ -1,5 +1,3 @@
-// src/config/apiConfig.ts
-
 export const getApiUrl = (): string => {
   if (process.env.VUE_APP_API_URL) {
     return process.env.VUE_APP_API_URL;

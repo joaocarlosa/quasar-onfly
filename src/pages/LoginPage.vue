@@ -35,7 +35,6 @@ export default defineComponent({
       const apiUrl = getApiUrl();
       try {
         const response = await axios.post(`${apiUrl}/login`, payload);
-        console.log('Resposta da API:', response.data);
 
         if (response.data && response.data.token) {
           window.localStorage.setItem('auth_token', response.data.token);

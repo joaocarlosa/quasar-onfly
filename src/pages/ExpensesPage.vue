@@ -7,9 +7,7 @@
           <q-btn label="Nova Despesa" @click="showDialog = true" />
         </div>
       </q-card-section>
-      <q-card-section>
-        <!-- ... seu código anterior para a tabela ... -->
-      </q-card-section>
+      <q-card-section> </q-card-section>
     </q-card>
     <q-card>
       <q-card-section>
@@ -19,6 +17,7 @@
           :columns="columns"
           :rows-per-page-options="[10, 25, 50]"
           v-model:pagination="pagination"
+          rows-per-page-label="Registros por página"
         >
           <template v-slot:body-cell-edit="props">
             <q-td :props="props">
@@ -72,7 +71,6 @@
       </q-card-section>
     </q-card>
 
-    <!-- Diálogo Modal para adicionar nova despesa -->
     <q-dialog v-model="showDialog">
       <q-card>
         <q-card-section>
@@ -124,15 +122,20 @@ export default defineComponent({
     const columns = [
       {
         name: 'description',
-        label: 'Description',
+        label: 'Descrição',
         align: 'left',
         field: 'description',
       },
-      { name: 'value', label: 'Value', align: 'left', field: 'value' },
-      { name: 'user_id', label: 'User ID', align: 'left', field: 'user_id' },
+      { name: 'value', label: 'Valor', align: 'left', field: 'value' },
+      {
+        name: 'user_id',
+        label: 'ID de Usuário',
+        align: 'left',
+        field: 'user_id',
+      },
       {
         name: 'created_at',
-        label: 'Created At',
+        label: 'Data de criação',
         align: 'left',
         field: (row) => new Date(row.created_at).toLocaleString(),
       },
@@ -212,7 +215,7 @@ export default defineComponent({
           },
         });
         showDialog.value = false;
-        fetchExpenses(); // atualiza a lista de despesas
+        fetchExpenses();
         newExpense.value = { value: '', description: '' };
       } catch (error) {
         console.error('Erro ao adicionar nova despesa:', error);
