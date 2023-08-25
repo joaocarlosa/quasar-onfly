@@ -2,7 +2,7 @@
   <q-page>
     <q-card>
       <q-card-section>
-        <div class="text-h6">Expenses</div>
+        <div class="text-h6">Despesas</div>
       </q-card-section>
       <q-card-section>
         <q-table
@@ -14,7 +14,20 @@
         >
           <template v-slot:body-cell-edit="props">
             <q-td :props="props">
-              <q-btn flat round icon="edit" @click="startEditing(props.row)" />
+              <div class="q-gutter-xs q-table__control q-ml-auto">
+                <q-btn
+                  flat
+                  round
+                  icon="remove_red_eye"
+                  @click="viewExpense(props.row)"
+                />
+                <q-btn
+                  flat
+                  round
+                  icon="edit"
+                  @click="startEditing(props.row)"
+                />
+              </div>
             </q-td>
           </template>
           <template v-slot:body-cell-description="props">
@@ -51,6 +64,7 @@
 import { defineComponent, ref } from 'vue';
 import axios from 'axios';
 import { getApiUrl } from '../config/apiConfig';
+import { useRouter } from 'vue-router';
 
 export default defineComponent({
   name: 'ExpensesPage',
@@ -61,7 +75,6 @@ export default defineComponent({
     const editedFields = ref({ description: '', value: '' });
 
     const columns = [
-      { name: 'edit', label: '', align: 'left', field: 'edit' },
       {
         name: 'description',
         label: 'Description',
@@ -76,6 +89,7 @@ export default defineComponent({
         align: 'left',
         field: (row) => new Date(row.created_at).toLocaleString(),
       },
+      { name: 'edit', label: '', align: 'left', field: 'edit' },
     ];
 
     const fetchExpenses = async () => {
@@ -92,6 +106,12 @@ export default defineComponent({
       } catch (error) {
         console.error('Erro ao buscar despesas:', error);
       }
+    };
+
+    const router = useRouter();
+
+    const viewExpense = (row) => {
+      router.push({ name: 'ExpenseDetails', params: { id: row.id } });
     };
 
     const startEditing = (row) => {
@@ -138,6 +158,7 @@ export default defineComponent({
       updateExpense,
       editingId,
       editedFields,
+      viewExpense,
     };
   },
 });
