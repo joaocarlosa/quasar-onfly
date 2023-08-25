@@ -35,6 +35,12 @@
                   icon="edit"
                   @click="startEditing(props.row)"
                 />
+                <q-btn
+                  flat
+                  round
+                  icon="delete"
+                  @click="confirmDelete(props.row)"
+                />
               </div>
             </q-td>
           </template>
@@ -84,6 +90,17 @@
         <q-card-actions align="right">
           <q-btn flat label="Cancelar" @click="showDialog = false" />
           <q-btn flat label="Adicionar" @click="addExpense" />
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
+    <q-dialog v-model="showDeleteDialog">
+      <q-card>
+        <q-card-section>
+          <div>Tem certeza de que deseja excluir este registro?</div>
+        </q-card-section>
+        <q-card-actions align="right">
+          <q-btn label="Cancelar" @click="showDeleteDialog = false" />
+          <q-btn label="Confirmar" @click="deleteExpense" />
         </q-card-actions>
       </q-card>
     </q-dialog>
@@ -154,12 +171,10 @@ export default defineComponent({
       const apiUrl = getApiUrl();
       const token = window.localStorage.getItem('auth_token');
 
-      // Remove 'R$ ' e ',00' do campo "value"
       const cleanedValue = editedFields.value.value
         .replace('R$ ', '')
         .replace(',00', '');
 
-      // Preparando o corpo da requisição com apenas os campos "value" e "description"
       const requestBody = {
         value: cleanedValue,
         description: editedFields.value.description,
@@ -204,6 +219,32 @@ export default defineComponent({
       }
     };
 
+    const showDeleteDialog = ref(false);
+    const rowToDelete = ref(null);
+
+    const confirmDelete = (row) => {
+      showDeleteDialog.value = true;
+      rowToDelete.value = row;
+    };
+
+    const deleteExpense = async () => {
+      const apiUrl = getApiUrl();
+      const token = window.localStorage.getItem('auth_token');
+
+      try {
+        await axios.delete(`${apiUrl}/expenses/${rowToDelete.value.id}`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        fetchExpenses();
+      } catch (error) {
+        console.error('Erro ao excluir despesa:', error);
+      }
+
+      showDeleteDialog.value = false;
+    };
+
     fetchExpenses();
 
     return {
@@ -218,6 +259,9 @@ export default defineComponent({
       showDialog,
       newExpense,
       addExpense,
+      showDeleteDialog,
+      confirmDelete,
+      deleteExpense,
     };
   },
 });
