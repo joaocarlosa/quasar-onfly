@@ -9,6 +9,39 @@
         type="password"
       ></q-input>
       <q-btn @click="login()" label="Login"></q-btn>
+      <q-btn
+        @click="showCreateUserDialog = true"
+        label="Cadastrar usuário"
+      ></q-btn>
+      <!-- Botão para abrir modal -->
+      <q-dialog v-model="showCreateUserDialog">
+        <q-card>
+          <q-card-section>
+            <q-input
+              outlined
+              v-model="newUser.name"
+              label="Nome"
+              type="text"
+            ></q-input>
+            <q-input
+              outlined
+              v-model="newUser.email"
+              label="Email"
+              type="email"
+            ></q-input>
+            <q-input
+              outlined
+              v-model="newUser.password"
+              label="Senha"
+              type="password"
+            ></q-input>
+          </q-card-section>
+          <q-card-actions align="right">
+            <q-btn label="Cancelar" @click="showCreateUserDialog = false" />
+            <q-btn label="Criar" @click="createUser" />
+          </q-card-actions>
+        </q-card>
+      </q-dialog>
     </div>
   </q-page>
 </template>
@@ -25,6 +58,8 @@ export default defineComponent({
     const email = ref('');
     const password = ref('');
     const router = useRouter();
+    const newUser = ref({ name: '', email: '', password: '' });
+    const showCreateUserDialog = ref(false);
 
     async function login() {
       const payload = {
@@ -33,6 +68,7 @@ export default defineComponent({
       };
 
       const apiUrl = getApiUrl();
+
       try {
         const response = await axios.post(`${apiUrl}/login`, payload);
 
@@ -45,10 +81,32 @@ export default defineComponent({
       }
     }
 
+    async function createUser() {
+      const apiUrl = getApiUrl();
+      const payload = {
+        name: newUser.value.name,
+        email: newUser.value.email,
+        password: newUser.value.password,
+      };
+
+      try {
+        const response = await axios.post(`${apiUrl}/users`, payload);
+
+        if (response.data) {
+          showCreateUserDialog.value = false;
+        }
+      } catch (error) {
+        console.error('Erro ao criar novo usuário:', error);
+      }
+    }
+
     return {
       email,
       password,
       login,
+      showCreateUserDialog,
+      newUser,
+      createUser,
     };
   },
 });
