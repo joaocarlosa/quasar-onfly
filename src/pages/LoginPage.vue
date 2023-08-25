@@ -22,8 +22,8 @@ import { getApiUrl } from '../config/apiConfig';
 export default defineComponent({
   name: 'LoginPage',
   setup() {
-    const email = ref('jc@email.com');
-    const password = ref('123123');
+    const email = ref('');
+    const password = ref('');
     const router = useRouter();
 
     async function login() {
