@@ -1,6 +1,9 @@
 <template>
   <q-page class="q-pa-md row justify-center items-center" style="height: 100vh">
     <div>
+      <div class="q-gutter-md row justify-between items-center">
+        <div class="text-h6">Login</div>
+      </div>
       <q-input outlined v-model="email" label="Email" type="email"></q-input>
       <q-input
         outlined
