@@ -37,12 +37,12 @@ quasar build
 
 See [Configuring quasar.config.js](https://v2.quasar.dev/quasar-cli-vite/quasar-config-js).
 
-### DEMONSTRATION
+# DEMONSTRATION
 
-# Login Page
+### Login Page
 
 ![login](https://github.com/joaocarlosa/quasar-onfly/assets/9219186/f458878e-df55-4505-925a-423ead2d788b)
 
-# Expenses Page
+### Expenses Page
 
 ![despesas](https://github.com/joaocarlosa/quasar-onfly/assets/9219186/a02bbd86-0e48-4f48-bff5-0d3713da1df4)
