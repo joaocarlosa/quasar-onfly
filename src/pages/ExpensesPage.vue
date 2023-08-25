@@ -2,8 +2,16 @@
   <q-page>
     <q-card>
       <q-card-section>
-        <div class="text-h6">Despesas</div>
+        <div class="q-gutter-md row justify-between items-center">
+          <div class="text-h6">Despesas</div>
+          <q-btn label="Nova Despesa" @click="showDialog = true" />
+        </div>
       </q-card-section>
+      <q-card-section>
+        <!-- ... seu código anterior para a tabela ... -->
+      </q-card-section>
+    </q-card>
+    <q-card>
       <q-card-section>
         <q-table
           :rows="expenses"
@@ -57,6 +65,28 @@
         </q-table>
       </q-card-section>
     </q-card>
+
+    <!-- Diálogo Modal para adicionar nova despesa -->
+    <q-dialog v-model="showDialog">
+      <q-card>
+        <q-card-section>
+          <div class="text-h6">Adicionar Nova Despesa</div>
+        </q-card-section>
+        <q-card-section>
+          <q-input
+            outlined
+            v-model="newExpense.description"
+            label="Descrição"
+            class="q-mt-md"
+          />
+          <q-input outlined v-model="newExpense.value" label="Valor" />
+        </q-card-section>
+        <q-card-actions align="right">
+          <q-btn flat label="Cancelar" @click="showDialog = false" />
+          <q-btn flat label="Adicionar" @click="addExpense" />
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
   </q-page>
 </template>
 
@@ -148,6 +178,32 @@ export default defineComponent({
       }
     };
 
+    const showDialog = ref(false);
+    const newExpense = ref({ value: '', description: '' });
+
+    const addExpense = async () => {
+      const apiUrl = getApiUrl();
+      const token = window.localStorage.getItem('auth_token');
+
+      const requestBody = {
+        value: newExpense.value.value,
+        description: newExpense.value.description,
+      };
+
+      try {
+        await axios.post(`${apiUrl}/expenses`, requestBody, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        showDialog.value = false;
+        fetchExpenses(); // atualiza a lista de despesas
+        newExpense.value = { value: '', description: '' };
+      } catch (error) {
+        console.error('Erro ao adicionar nova despesa:', error);
+      }
+    };
+
     fetchExpenses();
 
     return {
@@ -159,6 +215,9 @@ export default defineComponent({
       editingId,
       editedFields,
       viewExpense,
+      showDialog,
+      newExpense,
+      addExpense,
     };
   },
 });
